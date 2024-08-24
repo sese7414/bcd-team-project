@@ -5,11 +5,12 @@ from loguru import logger
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
-from langchain.document_loaders import PyPDFLoader
-from langchain.document_loaders import Docx2txtLoader
-from langchain.document_loaders import UnstructuredPowerPointLoader
+# 문서였을 때 사용
+# from langchain.document_loaders import PyPDFLoader
+# from langchain.document_loaders import Docx2txtLoader
+# from langchain.document_loaders import UnstructuredPowerPointLoader
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+# from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 
 from langchain.memory import ConversationBufferMemory
@@ -31,7 +32,7 @@ def main():
 
     st.title("_:blue[Hyundai Motor]_ - Motor Vehicle Law Data :blue[QA Chatbot] :scales:")
     st.markdown("Hyundai Motor Company & Handong Grobal University")
-    
+    # st.markdown("Place your legal documents in the space in the sidebar. Enter your OpenAI API Key below it and press Process!")
     # sidebar
     st.logo(
         horizontal_logo,
@@ -50,17 +51,16 @@ def main():
         st.session_state.processComplete = None
 
     with st.sidebar:
-        uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx'], accept_multiple_files=True)
         openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
-        process = st.button("Process")
+        process = st.button("Start chatting")
 
     if process:
         if not openai_api_key:
             st.info("Please add your OpenAI API key to continue.")
             st.stop()
-        files_text = get_text(uploaded_files)
-        text_chunks = get_text_chunks(files_text)
-        vectorstore = get_vectorstore(text_chunks)
+
+        # FAISS 벡터스토어 로드
+        vectorstore = load_vectorstore('./db/faiss')
 
         st.session_state.conversation = get_conversation_chain(vectorstore, openai_api_key)
         st.session_state.processComplete = True
@@ -100,51 +100,20 @@ def main():
 
                     st.session_state.messages.append({"role": "assistant", "content": response})
 
-def tiktoken_len(text):
-    tokenizer = tiktoken.get_encoding("cl100k_base")
-    tokens = tokenizer.encode(text)
-    return len(tokens)
-
-def get_text(docs):
-    doc_list = []
-    for doc in docs:
-        file_name = doc.name
-        with open(file_name, "wb") as file:
-            file.write(doc.getvalue())
-            logger.info(f"Uploaded {file_name}")
-        if '.pdf' in doc.name:
-            loader = PyPDFLoader(file_name)
-            documents = loader.load_and_split()
-        elif '.docx' in doc.name:
-            loader = Docx2txtLoader(file_name)
-            documents = loader.load_and_split()
-        elif '.pptx' in doc.name:
-            loader = UnstructuredPowerPointLoader(file_name)
-            documents = loader.load_and_split()
-
-        doc_list.extend(documents)
-    return doc_list
-
-def get_text_chunks(text):
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=900,
-        chunk_overlap=100,
-        length_function=tiktoken_len
-    )
-    chunks = text_splitter.split_documents(text)
-    return chunks
-
-def get_vectorstore(text_chunks):
+def load_vectorstore(db_path):
+    # Hugging Face 임베딩 모델 로드 (임베딩 모델 정보는 저장된 벡터스토어와 동일해야 함)
     embeddings = HuggingFaceEmbeddings(
-        model_name="jhgan/ko-sroberta-multitask",
+        model_name="BAAI/bge-large-en-v1.5",
         model_kwargs={'device': 'cpu'},
         encode_kwargs={'normalize_embeddings': True}
     )
-    vectordb = FAISS.from_documents(text_chunks, embeddings)
-    return vectordb
+
+    # 저장된 FAISS 벡터스토어 로드
+    vectorstore = FAISS.load_local(db_path, embeddings)
+    return vectorstore
 
 def get_conversation_chain(vectorstore, openai_api_key):
-    llm = ChatOpenAI(openai_api_key=openai_api_key, model_name='gpt-3.5-turbo', temperature=0)
+    llm = ChatOpenAI(openai_api_key=openai_api_key, model_name='gpt-4o-mini-2024-07-18', temperature=0)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         chain_type="stuff",
