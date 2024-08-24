@@ -24,7 +24,7 @@ def main():
         page_icon=Hyundai_logo
     )
 
-    st.title("_:blue[Hyundai Motor]_ - Motor Vehicle Law Data :blue [QA Chatbot] :scales:")
+    st.title("_:blue[Hyundai Motor]_ - Motor Vehicle Law Data :blue[QA Chatbot] :scales:")
     st.markdown("Hyundai Motor Company & Handong Grobal University")
 
     # sidebar
