@@ -108,6 +108,7 @@ def load_vectorstore(db_path):
         encode_kwargs={'normalize_embeddings': True}
     )
 
+
     # 저장된 FAISS 벡터스토어 로드
     vectorstore = FAISS.load_local(db_path, embeddings)
     return vectorstore
