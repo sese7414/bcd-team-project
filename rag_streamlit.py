@@ -5,12 +5,6 @@ from loguru import logger
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
-# 문서였을 때 사용
-# from langchain.document_loaders import PyPDFLoader
-# from langchain.document_loaders import Docx2txtLoader
-# from langchain.document_loaders import UnstructuredPowerPointLoader
-
-# from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 
 from langchain.memory import ConversationBufferMemory
@@ -32,7 +26,7 @@ def main():
 
     st.title("_:blue[Hyundai Motor]_ - Motor Vehicle Law Data :blue[QA Chatbot] :scales:")
     st.markdown("Hyundai Motor Company & Handong Grobal University")
-    # st.markdown("Place your legal documents in the space in the sidebar. Enter your OpenAI API Key below it and press Process!")
+
     # sidebar
     st.logo(
         horizontal_logo,
@@ -53,7 +47,7 @@ def main():
     with st.sidebar:
         openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
         process = st.button("Start chatting")
-        
+
 
     if process:
         if not openai_api_key:
@@ -61,7 +55,7 @@ def main():
             st.stop()
 
         # FAISS 벡터스토어 로드
-        vectorstore = load_vectorstore('./db/faiss')
+        vectorstore = load_vectorstore('db/faiss')
 
         st.session_state.conversation = get_conversation_chain(vectorstore, openai_api_key)
         st.session_state.processComplete = True
