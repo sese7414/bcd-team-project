@@ -53,6 +53,7 @@ def main():
     with st.sidebar:
         openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
         process = st.button("Start chatting")
+        
 
     if process:
         if not openai_api_key:
