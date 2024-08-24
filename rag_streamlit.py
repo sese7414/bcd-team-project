@@ -24,7 +24,7 @@ def main():
         page_icon=Hyundai_logo
     )
 
-    st.title("_:#00306C[Hyundai Motor]_ - Motor Vehicle Law Data :#00306C [QA Chatbot] :scales:")
+    st.title("_:blue[Hyundai Motor]_ - Motor Vehicle Law Data :blue [QA Chatbot] :scales:")
     st.markdown("Hyundai Motor Company & Handong Grobal University")
 
     # sidebar
@@ -62,7 +62,7 @@ def main():
         
 
     if 'messages' not in st.session_state:
-        st.session_state['messages'] = [{"role": "assistant", "content": "Hi! If you have any questions about a given legal document, feel free to ask!"}]
+        st.session_state['messages'] = [{"role": "assistant", "color": "#002c5f", "content": "Hi! If you have any questions about a given legal document, feel free to ask!"}]
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
