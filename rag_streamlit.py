@@ -51,8 +51,8 @@ def main():
 
         /* 기본 버튼 hover 색상 */
         .css-1cpxqw2 .stButton button:hover {
-            background-color: #FF3333;
-            color: white;
+            background-color: #002C5F;
+            color: blue;
         }
         </style>
         """,
