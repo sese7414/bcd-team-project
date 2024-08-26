@@ -24,6 +24,41 @@ def main():
         page_icon=Hyundai_logo
     )
 
+    # Custom CSS for the theme
+    st.markdown(
+        """
+        <style>
+        /* 전체 배경 색상 */
+        .css-18e3th9 {
+            background-color: #AACAE6;
+        }
+
+        /* 두 번째 배경 색상 (컨텐츠 박스) */
+        .css-1d391kg {
+            background-color: #FFFFFF;
+        }
+
+        /* 텍스트 색상 */
+        .css-16huue1 {
+            color: #000000;
+        }
+
+        /* 기본 버튼 색상 */
+        .css-1cpxqw2 .stButton button {
+            background-color: #FF4B4B;
+            color: white;
+        }
+
+        /* 기본 버튼 hover 색상 */
+        .css-1cpxqw2 .stButton button:hover {
+            background-color: #FF3333;
+            color: white;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     st.title("_:blue[Hyundai Motor]_ - Motor Vehicle Law Data :blue[QA Chatbot] :scales:")
     st.markdown("Hyundai Motor Company & Handong Grobal University")
 
